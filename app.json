@@ -1,0 +1,5 @@
+{
+  "name": "SPM app",
+  "description": "",
+  "image": "heroku/nodejs"
+}
