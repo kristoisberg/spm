@@ -1,20 +1,19 @@
 import { ReactNode } from "react";
 import { useFormikContext } from "formik";
+import { Button } from "antd";
 
 export type SubmitButtonProps = {
   id?: string;
   children?: ReactNode;
 };
 
-const SubmitButton = ({ children, ...props }: SubmitButtonProps) => {
+const SubmitButton = ({ id, children }: SubmitButtonProps) => {
   const { isSubmitting } = useFormikContext();
 
   return (
-    <div className="d-grid mt-2">
-      <button type="submit" className="btn btn-primary btn-lg" disabled={isSubmitting} {...props}>
-        {children || "Submit"}
-      </button>
-    </div>
+    <Button id={id} type="primary" size="large" block htmlType="submit" loading={isSubmitting}>
+      {children || "Submit"}
+    </Button>
   );
 };
 

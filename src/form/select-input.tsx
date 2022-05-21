@@ -1,7 +1,7 @@
 import React from "react";
-import { FormikValues, useField } from "formik";
+import { Select } from "formik-antd";
 import InputProps from "./input-props";
-import InternalInputProps from "./internal-input-props";
+import { FormikValues } from "formik";
 
 export type Option = {
   name: string;
@@ -11,20 +11,25 @@ export type Option = {
 
 export type SelectInputProps<TValues extends FormikValues> = {
   options: Option[];
-} & InputProps<TValues> &
-  InternalInputProps;
+  mode?: "multiple" | "tags";
+  allowClear?: boolean;
+} & InputProps<TValues>;
 
-const SelectInput = <TValues extends FormikValues>({ name, options, ...props }: SelectInputProps<TValues>) => {
-  const [fieldProps] = useField(name);
-
+const SelectInput = <TValues extends FormikValues>({
+  name,
+  id,
+  mode,
+  allowClear,
+  options,
+}: SelectInputProps<TValues>) => {
   return (
-    <select className="form-select" {...props} {...fieldProps}>
+    <Select name={name} id={id} mode={mode} allowClear={allowClear}>
       {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.name}
         </option>
       ))}
-    </select>
+    </Select>
   );
 };
 
