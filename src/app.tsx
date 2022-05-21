@@ -1,8 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import Index from "./pages/index";
-import AddClientPage from "./pages/add-client";
-import EditClientPage from "./pages/edit-client";
 import { useState } from "react";
 import { ItemType } from "antd/lib/menu/hooks/useItems";
 import { BellFilled, FallOutlined, RiseOutlined } from "@ant-design/icons";
