@@ -32,6 +32,15 @@ module.exports = () => {
       publicPath: "/",
       filename: "bundle.js",
     },
+    devServer: {
+      hot: true,
+      port: 8008,
+      historyApiFallback: true,
+      allowedHosts: "auto",
+      devMiddleware: {
+        publicPath: "http://localhost:8008/",
+      },
+    },
     plugins: [
       new HtmlWebPackPlugin({
         hash: true,
