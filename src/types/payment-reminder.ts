@@ -1,4 +1,4 @@
-type Expense = {
+type PaymentReminder = {
   id: string;
   name: string;
   amount: number;
@@ -6,4 +6,4 @@ type Expense = {
   editing: boolean;
 };
 
-export default Expense;
+export default PaymentReminder;

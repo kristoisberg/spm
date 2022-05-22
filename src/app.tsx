@@ -1,5 +1,5 @@
-import { Layout, Menu } from "antd";
-import { useState } from "react";
+import { Layout, Menu, message } from "antd";
+import { useEffect, useState } from "react";
 import { ItemType } from "antd/lib/menu/hooks/useItems";
 import { BellFilled, FallOutlined, RiseOutlined } from "@ant-design/icons";
 import Incomes from "./pages/incomes";
@@ -10,7 +10,7 @@ import { MenuInfo } from "rc-menu/lib/interface";
 const MENU_ITEMS: ItemType[] = [
   { key: "incomes", label: "Incomes", icon: <RiseOutlined /> },
   { key: "expenses", label: "Expenses", icon: <FallOutlined /> },
-  { key: "reminders", label: "Payment reminders", icon: <BellFilled /> },
+  { key: "reminders", label: "Payment Reminders", icon: <BellFilled /> },
 ];
 
 const PAGES: { [key: string]: React.ComponentType } = {
@@ -24,6 +24,13 @@ const App = (): JSX.Element => {
   const toggleCollapsed = () => setCollapsed((isCollapsed) => !isCollapsed);
 
   const [activePage, setActivePage] = useState("incomes");
+
+  useEffect(() => {
+    message.warning(
+      "This is a prototype. Your data will not be saved and is reset after refreshing or using the menu.",
+      5
+    );
+  }, []);
 
   const onClickMenuItem = ({ key }: MenuInfo) => setActivePage(key);
 
