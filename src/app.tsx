@@ -26,10 +26,7 @@ const App = (): JSX.Element => {
   const [activePage, setActivePage] = useState("incomes");
 
   useEffect(() => {
-    message.warning(
-      "This is a prototype. Your data will not be saved and is reset after refreshing or using the menu.",
-      5
-    );
+    message.warning("This is a prototype. Your data will is saved and is reset after refreshing or using the menu.", 5);
   }, []);
 
   const onClickMenuItem = ({ key }: MenuInfo) => setActivePage(key);

@@ -1,5 +1,5 @@
 import { CloseOutlined, DeleteFilled, EditFilled, PlusOutlined, SaveFilled } from "@ant-design/icons";
-import { Button, Form, Input, InputNumber, Popconfirm, Table, Typography } from "antd";
+import { Button, Form, Input, InputNumber, message, Modal, Popconfirm, Select, Table, Typography } from "antd";
 import { ColumnType } from "antd/lib/table";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -7,11 +7,14 @@ import Expense from "../types/expense";
 
 const Expenses = () => {
   const [form] = Form.useForm();
+  const [newCategory, setNewCategory] = useState("");
+  const [categories, setCategories] = useState(["Subscription", "Food"]);
   const [expenses, setExpenses] = useState<Expense[]>([
-    { id: uuidv4(), name: "OnlyFans", amount: 10, date: "2022-05-22" },
+    { id: uuidv4(), name: "OnlyFans", category: "Subscription", amount: 10, date: "2022-05-22" },
   ]);
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [isEditingAddedRow, setEditingAddedRow] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const columns: ColumnType<Expense>[] = [
     {
@@ -35,7 +38,7 @@ const Expenses = () => {
               },
             ]}
           >
-            <Input />
+            <Input placeholder="Name" />
           </Form.Item>
         );
       },
@@ -62,7 +65,48 @@ const Expenses = () => {
               },
             ]}
           >
-            <InputNumber prefix="$" />
+            <InputNumber placeholder="Amount" prefix="$" />
+          </Form.Item>
+        );
+      },
+      align: "center",
+    },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+      render: (category, expense) => {
+        if (editingRowId !== expense.id) {
+          return category;
+        }
+        return (
+          <Form.Item
+            style={{
+              margin: 0,
+            }}
+            name="category"
+            rules={[
+              {
+                required: true,
+                message: `Category is required.`,
+              },
+            ]}
+          >
+            <Select
+              showSearch
+              placeholder="Category"
+              style={{ textAlign: "left" }}
+              onSelect={(category: string) => category === "null" && form.setFieldsValue({ category: "" })}
+            >
+              {categories.map((category) => (
+                <Select.Option key={category}>{category}</Select.Option>
+              ))}
+              <Select.Option key={null}>
+                <Button icon={<PlusOutlined />} type="primary" block onClick={() => setModalVisible(true)}>
+                  New Category
+                </Button>
+              </Select.Option>
+            </Select>
           </Form.Item>
         );
       },
@@ -89,7 +133,7 @@ const Expenses = () => {
               },
             ]}
           >
-            <Input />
+            <Input placeholder="Date" />
           </Form.Item>
         );
       },
@@ -118,8 +162,9 @@ const Expenses = () => {
   ];
 
   const onAddRow = () => {
-    const newRow: Expense = { id: uuidv4(), name: "", amount: 0, date: "" };
+    const newRow: Expense = { id: uuidv4(), name: "", category: "", amount: 0, date: "" };
     setExpenses((expenses) => [...expenses, newRow]);
+    form.setFieldsValue(newRow);
     setEditingRowId(newRow.id);
     setEditingAddedRow(true);
   };
@@ -131,7 +176,7 @@ const Expenses = () => {
 
   const onEditRow = async (id: string) => {
     const newRow = await form.validateFields();
-    setExpenses((expenses) => expenses.map((expense) => (expense.id === id ? newRow : expense)));
+    setExpenses((expenses) => expenses.map((expense) => (expense.id === id ? { ...expense, ...newRow } : expense)));
     setEditingRowId(null);
   };
 
@@ -168,6 +213,30 @@ const Expenses = () => {
           }}
         ></Table>
       </Form>
+      <Modal
+        title="Add New Category"
+        visible={isModalVisible}
+        onOk={() => {
+          if (newCategory === "" || newCategory === "null") {
+            message.error("Enter a name for the category!");
+          } else {
+            setCategories((categories) => [...categories, newCategory]);
+            form.setFieldsValue({ category: newCategory });
+            setNewCategory("");
+            setModalVisible(false);
+          }
+        }}
+        onCancel={() => {
+          setNewCategory("");
+          setModalVisible(false);
+        }}
+      >
+        <Input
+          placeholder="Category Name"
+          value={newCategory}
+          onChange={(event) => setNewCategory(event.target.value)}
+        />
+      </Modal>
     </>
   );
 };

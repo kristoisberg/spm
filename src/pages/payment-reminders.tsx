@@ -1,5 +1,5 @@
 import { CloseOutlined, DeleteFilled, EditFilled, PlusOutlined, SaveFilled } from "@ant-design/icons";
-import { Button, Form, Input, InputNumber, Popconfirm, Table, Typography } from "antd";
+import { Button, Form, Input, InputNumber, message, Modal, Popconfirm, Select, Table, Typography } from "antd";
 import { ColumnType } from "antd/lib/table";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -7,11 +7,14 @@ import PaymentReminder from "../types/payment-reminder";
 
 const PaymentReminders = () => {
   const [form] = Form.useForm();
+  const [newCategory, setNewCategory] = useState("");
+  const [categories, setCategories] = useState(["Subscription", "Food"]);
   const [paymentReminders, setPaymentReminders] = useState<PaymentReminder[]>([
-    { id: uuidv4(), name: "OnlyFans", amount: 10, date: "2022-05-22" },
+    { id: uuidv4(), name: "OnlyFans", category: "Subscription", amount: 10, date: "2022-05-22" },
   ]);
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [isEditingAddedRow, setEditingAddedRow] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const columns: ColumnType<PaymentReminder>[] = [
     {
@@ -35,7 +38,7 @@ const PaymentReminders = () => {
               },
             ]}
           >
-            <Input />
+            <Input placeholder="Name" />
           </Form.Item>
         );
       },
@@ -62,7 +65,48 @@ const PaymentReminders = () => {
               },
             ]}
           >
-            <InputNumber prefix="$" />
+            <InputNumber placeholder="Amount" prefix="$" />
+          </Form.Item>
+        );
+      },
+      align: "center",
+    },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+      render: (category, paymentReminder) => {
+        if (editingRowId !== paymentReminder.id) {
+          return category;
+        }
+        return (
+          <Form.Item
+            style={{
+              margin: 0,
+            }}
+            name="category"
+            rules={[
+              {
+                required: true,
+                message: `Category is required.`,
+              },
+            ]}
+          >
+            <Select
+              showSearch
+              placeholder="Category"
+              style={{ textAlign: "left" }}
+              onSelect={(category: string) => category === "null" && form.setFieldsValue({ category: "" })}
+            >
+              {categories.map((category) => (
+                <Select.Option key={category}>{category}</Select.Option>
+              ))}
+              <Select.Option key={null}>
+                <Button icon={<PlusOutlined />} type="primary" block onClick={() => setModalVisible(true)}>
+                  New Category
+                </Button>
+              </Select.Option>
+            </Select>
           </Form.Item>
         );
       },
@@ -89,7 +133,7 @@ const PaymentReminders = () => {
               },
             ]}
           >
-            <Input />
+            <Input placeholder="Date" />
           </Form.Item>
         );
       },
@@ -118,8 +162,9 @@ const PaymentReminders = () => {
   ];
 
   const onAddRow = () => {
-    const newRow: PaymentReminder = { id: uuidv4(), name: "", amount: 0, date: "" };
+    const newRow: PaymentReminder = { id: uuidv4(), name: "", category: "", amount: 0, date: "" };
     setPaymentReminders((paymentReminders) => [...paymentReminders, newRow]);
+    form.setFieldsValue(newRow);
     setEditingRowId(newRow.id);
     setEditingAddedRow(true);
   };
@@ -132,7 +177,9 @@ const PaymentReminders = () => {
   const onEditRow = async (id: string) => {
     const newRow = await form.validateFields();
     setPaymentReminders((paymentReminders) =>
-      paymentReminders.map((paymentReminder) => (paymentReminder.id === id ? newRow : paymentReminder))
+      paymentReminders.map((paymentReminder) =>
+        paymentReminder.id === id ? { ...paymentReminder, ...newRow } : paymentReminder
+      )
     );
     setEditingRowId(null);
   };
@@ -170,6 +217,30 @@ const PaymentReminders = () => {
           }}
         ></Table>
       </Form>
+      <Modal
+        title="Add New Category"
+        visible={isModalVisible}
+        onOk={() => {
+          if (newCategory === "" || newCategory === "null") {
+            message.error("Enter a name for the category!");
+          } else {
+            setCategories((categories) => [...categories, newCategory]);
+            form.setFieldsValue({ category: newCategory });
+            setNewCategory("");
+            setModalVisible(false);
+          }
+        }}
+        onCancel={() => {
+          setNewCategory("");
+          setModalVisible(false);
+        }}
+      >
+        <Input
+          placeholder="Category Name"
+          value={newCategory}
+          onChange={(event) => setNewCategory(event.target.value)}
+        />
+      </Modal>
     </>
   );
 };

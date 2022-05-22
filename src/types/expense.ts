@@ -3,6 +3,7 @@ type Expense = {
   name: string;
   amount: number;
   date: string;
+  category: string;
 };
 
 export default Expense;
