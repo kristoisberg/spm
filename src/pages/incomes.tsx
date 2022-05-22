@@ -11,7 +11,7 @@ const Incomes = () => {
     { id: uuidv4(), name: "Salary", amount: 1234, date: "2022-05-03" },
     { id: uuidv4(), name: "Scholarship", amount: 300, date: "2022-05-08" },
   ]);
-  const [editingRow, setEditingRow] = useState<Income | null>(null);
+  const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [isEditingAddedRow, setEditingAddedRow] = useState(false);
 
   const columns: ColumnType<Income>[] = [
@@ -20,7 +20,7 @@ const Incomes = () => {
       dataIndex: "name",
       key: "name",
       render: (name, income) => {
-        if (editingRow === null || editingRow.id !== income.id) {
+        if (editingRowId !== income.id) {
           return name;
         }
         return (
@@ -47,7 +47,7 @@ const Incomes = () => {
       dataIndex: "amount",
       key: "amount",
       render: (amount, income) => {
-        if (editingRow === null || editingRow.id !== income.id) {
+        if (editingRowId !== income.id) {
           return `$${Number(amount).toFixed(2)}`;
         }
         return (
@@ -74,7 +74,7 @@ const Incomes = () => {
       dataIndex: "date",
       key: "date",
       render: (date, income) => {
-        if (editingRow === null || editingRow.id !== income.id) {
+        if (editingRowId !== income.id) {
           return date;
         }
         return (
@@ -100,16 +100,16 @@ const Incomes = () => {
       title: "Operations",
       align: "right",
       render: (_, income) =>
-        editingRow === null ? (
+        editingRowId === null ? (
           <>
             <Button icon={<EditFilled />} type="primary" onClick={() => onStartEditingRow(income)} />{" "}
             <Popconfirm title="Sure to delete?" onConfirm={() => onDeleteRow(income.id)}>
               <Button icon={<DeleteFilled />} type="primary" danger />
             </Popconfirm>
           </>
-        ) : editingRow.id === income.id ? (
+        ) : editingRowId === income.id ? (
           <>
-            <Button icon={<SaveFilled />} type="primary" onClick={() => onEditRow(editingRow)} />{" "}
+            <Button icon={<SaveFilled />} type="primary" onClick={() => onEditRow(editingRowId)} />{" "}
             <Button icon={<CloseOutlined />} type="primary" danger onClick={() => onCancelEditingRow()} />
           </>
         ) : (
@@ -121,27 +121,27 @@ const Incomes = () => {
   const onAddRow = () => {
     const newRow: Income = { id: uuidv4(), name: "", amount: 0, date: "" };
     setIncomes((incomes) => [...incomes, newRow]);
-    setEditingRow(newRow);
+    setEditingRowId(newRow.id);
     setEditingAddedRow(true);
   };
 
   const onStartEditingRow = (row: Income) => {
     form.setFieldsValue(row);
-    setEditingRow(row);
+    setEditingRowId(row.id);
   };
 
-  const onEditRow = async (row: Income) => {
+  const onEditRow = async (id: string) => {
     const newRow = await form.validateFields();
-    setIncomes((incomes) => incomes.map((income) => (income.id === row.id ? newRow : income)));
-    setEditingRow(null);
+    setIncomes((incomes) => incomes.map((income) => (income.id === id ? newRow : income)));
+    setEditingRowId(null);
   };
 
   const onCancelEditingRow = () => {
-    if (isEditingAddedRow && editingRow) {
+    if (isEditingAddedRow && editingRowId) {
       setEditingAddedRow(false);
-      onDeleteRow(editingRow.id);
+      onDeleteRow(editingRowId);
     }
-    setEditingRow(null);
+    setEditingRowId(null);
   };
 
   const onDeleteRow = (id: string) => {
@@ -157,7 +157,7 @@ const Incomes = () => {
         style={{ marginBottom: "1em", float: "right" }}
         onClick={() => onAddRow()}
       >
-        New income
+        New Income
       </Button>
       <Form form={form} component={false}>
         <Table<Income>
