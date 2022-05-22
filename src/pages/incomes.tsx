@@ -132,6 +132,10 @@ const Incomes = () => {
                 required: true,
                 message: `Date is required.`,
               },
+              {
+                pattern: /^(\d{4})-(\d{2})-(\d{2})$/,
+                message: "Date must be in the format of YYYY-MM-DD.",
+              },
             ]}
           >
             <Input placeholder="Date" />

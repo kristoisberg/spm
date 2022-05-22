@@ -1,6 +1,7 @@
-import { CloseOutlined, DeleteFilled, EditFilled, PlusOutlined, SaveFilled } from "@ant-design/icons";
-import { Button, Form, Input, InputNumber, message, Modal, Popconfirm, Select, Table, Typography } from "antd";
+import { CloseOutlined, DeleteFilled, EditFilled, PlusOutlined, SaveFilled, WarningFilled } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, message, Modal, Popconfirm, Select, Table, Tooltip, Typography } from "antd";
 import { ColumnType } from "antd/lib/table";
+import { differenceInCalendarDays, isBefore, isEqual, isPast, parseISO, startOfToday } from "date-fns";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import PaymentReminder from "../types/payment-reminder";
@@ -8,15 +9,48 @@ import PaymentReminder from "../types/payment-reminder";
 const PaymentReminders = () => {
   const [form] = Form.useForm();
   const [newCategory, setNewCategory] = useState("");
-  const [categories, setCategories] = useState(["Subscription", "Food"]);
+  const [categories, setCategories] = useState(["Subscription", "Groceries"]);
   const [paymentReminders, setPaymentReminders] = useState<PaymentReminder[]>([
-    { id: uuidv4(), name: "OnlyFans", category: "Subscription", amount: 10, date: "2022-05-22" },
+    { id: uuidv4(), name: "YouTube Premium", category: "Subscription", amount: 10, date: "2022-05-21" },
+    { id: uuidv4(), name: "Spotify Premium", category: "Subscription", amount: 5, date: "2022-05-22" },
+    { id: uuidv4(), name: "OnlyFans", category: "Subscription", amount: 400, date: "2022-06-11" },
   ]);
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [isEditingAddedRow, setEditingAddedRow] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const columns: ColumnType<PaymentReminder>[] = [
+    {
+      title: "",
+      key: "icon",
+      render: (_, paymentReminder) => {
+        const today = startOfToday();
+        const date = parseISO(paymentReminder.date);
+        if (isEqual(date, today)) {
+          return (
+            <Tooltip title="Payment is due today!" placement="right">
+              <WarningFilled style={{ color: "#ffa940" }} />
+            </Tooltip>
+          );
+        }
+        if (isBefore(date, today)) {
+          return (
+            <Tooltip title="Payment is past due date!" placement="right">
+              <WarningFilled style={{ color: "#ff4d4f" }} />
+            </Tooltip>
+          );
+        }
+        const diff = differenceInCalendarDays(date, today);
+        if (diff <= 3) {
+          return (
+            <Tooltip title={`Payment is due in ${diff} days!`} placement="right">
+              <WarningFilled style={{ color: "#ffec3d" }} />
+            </Tooltip>
+          );
+        }
+        return "";
+      },
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -130,6 +164,10 @@ const PaymentReminders = () => {
               {
                 required: true,
                 message: `Date is required.`,
+              },
+              {
+                pattern: /^(\d{4})-(\d{2})-(\d{2})$/,
+                message: "Date must be in the format of YYYY-MM-DD.",
               },
             ]}
           >

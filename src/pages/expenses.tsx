@@ -8,9 +8,9 @@ import Expense from "../types/expense";
 const Expenses = () => {
   const [form] = Form.useForm();
   const [newCategory, setNewCategory] = useState("");
-  const [categories, setCategories] = useState(["Subscription", "Food"]);
+  const [categories, setCategories] = useState(["Subscription", "Groceries"]);
   const [expenses, setExpenses] = useState<Expense[]>([
-    { id: uuidv4(), name: "OnlyFans", category: "Subscription", amount: 10, date: "2022-05-22" },
+    { id: uuidv4(), name: "Groceries", category: "Groceries", amount: 10, date: "2022-05-21" },
   ]);
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [isEditingAddedRow, setEditingAddedRow] = useState(false);
@@ -130,6 +130,10 @@ const Expenses = () => {
               {
                 required: true,
                 message: `Date is required.`,
+              },
+              {
+                pattern: /^(\d{4})-(\d{2})-(\d{2})$/,
+                message: "Date must be in the format of YYYY-MM-DD.",
               },
             ]}
           >
