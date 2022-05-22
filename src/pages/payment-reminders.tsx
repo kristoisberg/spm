@@ -29,14 +29,14 @@ const PaymentReminders = () => {
         if (isEqual(date, today)) {
           return (
             <Tooltip title="Payment is due today!" placement="right">
-              <WarningFilled style={{ color: "#ffa940" }} />
+              <WarningFilled style={{ color: "#ffa940", fontSize: "1.5em" }} />
             </Tooltip>
           );
         }
         if (isBefore(date, today)) {
           return (
             <Tooltip title="Payment is past due date!" placement="right">
-              <WarningFilled style={{ color: "#ff4d4f" }} />
+              <WarningFilled style={{ color: "#ff4d4f", fontSize: "1.5em" }} />
             </Tooltip>
           );
         }
@@ -44,7 +44,7 @@ const PaymentReminders = () => {
         if (diff <= 3) {
           return (
             <Tooltip title={`Payment is due in ${diff} days!`} placement="right">
-              <WarningFilled style={{ color: "#ffec3d" }} />
+              <WarningFilled style={{ color: "#ffec3d", fontSize: "1.5em" }} />
             </Tooltip>
           );
         }
