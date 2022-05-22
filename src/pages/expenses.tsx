@@ -7,7 +7,7 @@ import Expense from "../types/expense";
 
 const Expenses = () => {
   const [expenses, setExpenses] = useState<Expense[]>([
-    { id: uuidv4(), name: "OnlyFans", amount: 10, date: "2022-05-22", editing: false },
+    { id: uuidv4(), name: "OnlyFans", amount: 10, date: "2022-05-22" },
   ]);
 
   const columns: ColumnType<Expense>[] = [

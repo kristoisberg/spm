@@ -23,7 +23,6 @@
       },
       "import-date-fns"
     ],
-    ["import", { "libraryName": "antd", "style": "css" }, "import-antd"],
-    ["import", { "libraryName": "formik-antd", "style": "css" }, "import-formik-antd"]
+    ["import", { "libraryName": "antd", "style": "css" }, "import-antd"]
   ]
 }

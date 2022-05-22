@@ -7,7 +7,7 @@ import PaymentReminder from "../types/payment-reminder";
 
 const PaymentReminders = () => {
   const [paymentReminders, setPaymentReminders] = useState<PaymentReminder[]>([
-    { id: uuidv4(), name: "OnlyFans", amount: 10, date: "2022-05-22", editing: false },
+    { id: uuidv4(), name: "OnlyFans", amount: 10, date: "2022-05-22" },
   ]);
 
   const columns: ColumnType<PaymentReminder>[] = [
